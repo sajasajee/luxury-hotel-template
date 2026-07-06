@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aurelia Bay — Luxury Hotel &amp; Villa</title>
+<meta name="description" content="Aurelia Bay — a private cliffside sanctuary of suites, villas and quiet luxury.">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<!-- Tailwind (Play CDN) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#14181B',
+          slate: {
+            DEFAULT: '#1F2733',
+            light: '#2E3A47',
+          },
+          gold: {
+            DEFAULT: '#C9A660',
+            deep: '#8A6D3B',
+            pale: '#E4D3A6',
+          },
+          cream: {
+            DEFAULT: '#F6F1E7',
+            warm: '#EFE6D8',
+          },
+        },
+        fontFamily: {
+          display: ['"Playfair Display"', 'serif'],
+          sans: ['Inter', 'sans-serif'],
+        },
+        letterSpacing: {
+          widest2: '.28em',
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background-color: #F6F1E7; }
+  .font-display { font-family: 'Playfair Display', serif; }
+
+  /* Eyebrow label with signature vertical gold rule */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: .75rem;
+    font-family: 'Inter', sans-serif;
+    font-size: .72rem;
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    color: #8A6D3B;
+  }
+  .eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 2px;
+    height: 18px;
+    background: #C9A660;
+  }
+  .eyebrow.on-dark { color: #E4D3A6; }
+  .eyebrow.on-dark::before { background: #E4D3A6; }
+
+  /* fade-in-on-scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity .9s ease, transform .9s ease;
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* nav link underline */
+  .nav-link {
+    position: relative;
+    padding-bottom: 4px;
+  }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 0%;
+    height: 1px;
+    background: #C9A660;
+    transition: width .35s ease;
+  }
+  .nav-link:hover::after { width: 100%; }
+
+  /* custom select arrow */
+  .field-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9' fill='none'><path d='M1 1L7 7L13 1' stroke='%23C9A660' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right .1rem center;
+  }
+
+  ::selection { background: #C9A660; color: #14181B; }
+
+  /* focus visibility */
+  a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible {
+    outline: 2px solid #C9A660;
+    outline-offset: 3px;
+  }
+
+  /* testimonial slider */
+  .slide { transition: opacity .6s ease; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal { transition: none; opacity: 1; transform: none; }
+    * { animation: none !important; transition-duration: .01ms !important; }
+  }
+
+  .hero-bg {
+    background-image:
+      linear-gradient(180deg, rgba(20,24,27,.55) 0%, rgba(20,24,27,.35) 45%, rgba(20,24,27,.92) 100%),
+      url('https://images.unsplash.com/photo-1602002418082-a4443e081dd1?q=80&w=2069&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+  }
+  .room-card-img {
+    transition: transform 1s cubic-bezier(.22,1,.36,1);
+  }
+  .room-card:hover .room-card-img { transform: scale(1.08); }
+  .room-card:hover .room-card-details { transform: translateY(-6px); }
+  .room-card-details { transition: transform .5s ease; }
+</style>
+</head>
+
+<body class="bg-cream text-ink antialiased">
+
+<!-- ============ NAVIGATION ============ -->
+<header id="site-nav" class="fixed top-0 inset-x-0 z-50 transition-all duration-500 border-b border-white/0">
+  <nav class="max-w-7xl mx-auto flex items-center justify-between px-6 md:px-10 py-5">
+    <a href="#home" class="font-display text-2xl tracking-wide text-cream">
+      Aurelia <span class="text-gold italic">Bay</span>
+    </a>
+
+    <ul class="hidden lg:flex items-center gap-10 text-[13px] tracking-widest2 uppercase text-cream/90">
+      <li><a href="#home" class="nav-link">Home</a></li>
+      <li><a href="#rooms" class="nav-link">Rooms</a></li>
+      <li><a href="#amenities" class="nav-link">Amenities</a></li>
+      <li><a href="#gallery" class="nav-link">Gallery</a></li>
+      <li><a href="#contact" class="nav-link">Contact</a></li>
+    </ul>
+
+    <div class="flex items-center gap-4">
+      <a href="#booking" class="hidden sm:inline-flex items-center gap-2 border border-gold text-gold hover:bg-gold hover:text-ink transition-colors duration-300 text-[12px] tracking-widest2 uppercase px-6 py-3">
+        Book Now
+      </a>
+      <!-- mobile toggle -->
+      <button id="menu-btn" aria-label="Open menu" aria-expanded="false" class="lg:hidden text-cream w-9 h-9 flex flex-col items-center justify-center gap-[5px]">
+        <span class="block w-6 h-px bg-current"></span>
+        <span class="block w-6 h-px bg-current"></span>
+        <span class="block w-4 h-px bg-current self-end"></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- mobile menu panel -->
+  <div id="mobile-menu" class="lg:hidden hidden bg-ink/98 border-t border-white/10">
+    <ul class="flex flex-col px-6 py-6 gap-5 text-cream text-sm tracking-widest2 uppercase">
+      <li><a href="#home" class="mobile-link block py-1">Home</a></li>
+      <li><a href="#rooms" class="mobile-link block py-1">Rooms</a></li>
+      <li><a href="#amenities" class="mobile-link block py-1">Amenities</a></li>
+      <li><a href="#gallery" class="mobile-link block py-1">Gallery</a></li>
+      <li><a href="#contact" class="mobile-link block py-1">Contact</a></li>
+      <li><a href="#booking" class="mobile-link inline-block mt-2 border border-gold text-gold px-6 py-3">Book Now</a></li>
+    </ul>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section id="home" class="relative hero-bg min-h-[100svh] flex items-end">
+  <div class="max-w-7xl mx-auto w-full px-6 md:px-10 pb-40 md:pb-48 pt-40 text-cream">
+    <p class="eyebrow on-dark reveal">Est. on the Amalfi cliffs</p>
+    <h1 class="font-display font-medium text-5xl sm:text-6xl md:text-7xl leading-[1.05] mt-6 max-w-3xl reveal">
+      A quiet corner<br class="hidden sm:block"> of the extraordinary.
+    </h1>
+    <p class="mt-6 max-w-xl text-cream/75 font-light text-base md:text-lg leading-relaxed reveal">
+      Nineteen suites and private villas, carved into the cliffside above the Tyrrhenian Sea —
+      where every view, meal, and hour is arranged around you.
+    </p>
+  </div>
+
+  <!-- Signature floating booking bar, bridges hero + next section -->
+  <div id="booking" class="absolute left-1/2 -translate-x-1/2 bottom-0 translate-y-1/2 w-[92%] md:w-auto z-20">
+    <div class="reveal bg-cream/95 backdrop-blur-md shadow-2xl shadow-ink/40 border border-gold/30 px-6 md:px-10 py-8 flex flex-col md:flex-row md:items-end gap-6 md:gap-10">
+
+      <div class="flex flex-col gap-2 md:w-40">
+        <label for="checkin" class="text-[11px] tracking-widest2 uppercase text-gold-deep">Check-in</label>
+        <input type="date" id="checkin" class="bg-transparent border-b border-ink/20 focus:border-gold text-sm py-2 outline-none">
+      </div>
+
+      <div class="flex flex-col gap-2 md:w-40">
+        <label for="checkout" class="text-[11px] tracking-widest2 uppercase text-gold-deep">Check-out</label>
+        <input type="date" id="checkout" class="bg-transparent border-b border-ink/20 focus:border-gold text-sm py-2 outline-none">
+      </div>
+
+      <div class="flex flex-col gap-2 md:w-32">
+        <label for="guests" class="text-[11px] tracking-widest2 uppercase text-gold-deep">Guests</label>
+        <select id="guests" class="field-select bg-transparent border-b border-ink/20 focus:border-gold text-sm py-2 outline-none pr-5">
+          <option>1 Guest</option>
+          <option selected>2 Guests</option>
+          <option>3 Guests</option>
+          <option>4+ Guests</option>
+        </select>
+      </div>
+
+      <button id="check-availability" type="button" class="bg-ink hover:bg-slate text-cream text-[12px] tracking-widest2 uppercase px-8 py-4 transition-colors duration-300 md:self-stretch">
+        Check Availability
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT & EXPERIENCE ============ -->
+<section class="bg-cream pt-44 md:pt-52 pb-24 md:pb-32 px-6 md:px-10">
+  <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-14 md:gap-20 items-center">
+
+    <div class="reveal relative">
+      <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?q=80&w=1974&auto=format&fit=crop"
+           alt="Sunlit villa terrace overlooking the sea" class="w-full h-[420px] md:h-[560px] object-cover">
+      <img src="https://images.unsplash.com/photo-1540541338287-41700207dee6?q=80&w=1974&auto=format&fit=crop"
+           alt="Detail of a private plunge pool" class="hidden md:block absolute -bottom-10 -left-10 w-56 h-72 object-cover border-8 border-cream shadow-xl">
+    </div>
+
+    <div class="reveal md:pl-6">
+      <p class="eyebrow">The Property</p>
+      <h2 class="font-display text-4xl md:text-5xl mt-6 leading-tight">
+        Built into the rock,<br> shaped by the light.
+      </h2>
+      <p class="mt-6 text-ink/70 leading-relaxed max-w-lg">
+        Aurelia Bay began as a single fisherman's villa in 1962. Three generations later,
+        it remains family-run — expanded stone by stone, never past the point where it
+        would stop feeling like somewhere to be quiet. No two suites share a floor plan;
+        no two mornings share a view.
+      </p>
+
+      <ul class="mt-10 grid sm:grid-cols-2 gap-x-8 gap-y-6">
+        <li class="flex items-start gap-4">
+          <svg class="w-5 h-5 mt-1 text-gold shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21c-4.97-4.2-8-7.94-8-11.5A8 8 0 0112 2a8 8 0 018 7.5c0 3.56-3.03 7.3-8 11.5z"/><circle cx="12" cy="9.5" r="2.2" stroke-linecap="round"/></svg>
+          <div>
+            <p class="font-medium text-sm">Private Beach Access</p>
+            <p class="text-ink/60 text-sm mt-1">A cove reserved for guests only.</p>
+          </div>
+        </li>
+        <li class="flex items-start gap-4">
+          <svg class="w-5 h-5 mt-1 text-gold shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4"><path stroke-linecap="round" stroke-linejoin="round" d="M4 20V10m0 10h16M4 10l8-6 8 6M4 10h16M9 20v-6h6v6"/></svg>
+          <div>
+            <p class="font-medium text-sm">24-Hour Concierge</p>
+            <p class="text-ink/60 text-sm mt-1">Arrangements made, quietly and well.</p>
+          </div>
+        </li>
+        <li class="flex items-start gap-4">
+          <svg class="w-5 h-5 mt-1 text-gold shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg>
+          <div>
+            <p class="font-medium text-sm">Rooftop Infinity Pool</p>
+            <p class="text-ink/60 text-sm mt-1">Where the pool meets the horizon line.</p>
+          </div>
+        </li>
+        <li class="flex items-start gap-4">
+          <svg class="w-5 h-5 mt-1 text-gold shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4"><path stroke-linecap="round" stroke-linejoin="round" d="M4 19h16M6 19V9l6-4 6 4v10M10 19v-5h4v5"/></svg>
+          <div>
+            <p class="font-medium text-sm">Family-Owned Since 1962</p>
+            <p class="text-ink/60 text-sm mt-1">Three generations, one address.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ROOMS & SUITES ============ -->
+<section id="rooms" class="bg-slate text-cream py-24 md:py-32 px-6 md:px-10">
+  <div class="max-w-7xl mx-auto">
+    <div class="reveal flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
+      <div>
+        <p class="eyebrow on-dark">Accommodations</p>
+        <h2 class="font-display text-4xl md:text-5xl mt-6">Rooms &amp; Villas</h2>
+      </div>
+      <p class="max-w-sm text-cream/60 text-sm leading-relaxed">
+        Each residence is furnished in limewash, linen and reclaimed olive wood —
+        designed to be lived in, not merely photographed.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8">
+
+      <!-- Room 1 -->
+      <article class="room-card group reveal bg-ink/40 border border-white/10 flex flex-col">
+        <div class="overflow-hidden h-72">
+          <img src="https://images.unsplash.com/photo-1591088398332-8a7791972843?q=80&w=1974&auto=format&fit=crop"
+               alt="The Horizon Suite bedroom with sea view" class="room-card-img w-full h-full object-cover">
+        </div>
+        <div class="room-card-details p-8 flex flex-col flex-1">
+          <div class="flex items-baseline justify-between gap-4">
+            <h3 class="font-display text-2xl">The Horizon Suite</h3>
+            <p class="text-gold font-display text-xl whitespace-nowrap">€620<span class="text-cream/50 text-xs font-sans">/night</span></p>
+          </div>
+          <p class="text-cream/60 text-sm mt-3 leading-relaxed">
+            A single sweeping room facing due west, built for watching the sun go down.
+          </p>
+          <ul class="mt-6 space-y-2 text-sm text-cream/70">
+            <li class="flex items-center gap-2"><span class="w-1 h-1 bg-gold"></span>52 m² · Private balcony</li>
+            <li class="flex items-center gap-2"><span class="w-1 h-1 bg-gold"></span>Freestanding stone bath</li>
+            <li class="flex items-center gap-2"><span class="w-1 h-1 bg-gold"></span>King bed, sea-facing</li>
+          </ul>
+          <a href="#contact" class="mt-8 inline-flex items-center gap-2 text-[12px] tracking-widest2 uppercase text-gold border-b border-gold/40 pb-1 w-fit hover:border-gold transition-colors">
+            View Details →
+          </a>
+        </div>
+      </article>
+
+      <!-- Room 2 -->
+      <article class="room-card group reveal bg-ink/40 border border-white/10 flex flex-col" style="transition-delay:.1s">
+        <div class="overflow-hidden h-72">
+          <img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=1974&auto=format&fit=crop"
+               alt="Garden Villa exterior with private pool" class="room-card-img w-full h-full object-cover">
+        </div>
+        <div class="room-card-details p-8 flex flex-col flex-1">
+          <div class="flex items-baseline justify-between gap-4">
+            <h3 class="font-display text-2xl">The Garden Villa</h3>
+            <p class="text-gold font-display text-xl whitespace-nowrap">€980<span class="text-cream/50 text-xs font-sans">/night</span></p>
+          </div>
+          <p class="text-cream/60 text-sm mt-3 leading-relaxed">
+            A detached, one-bedroom villa set among lemon trees, with its own plunge pool.
+          </p>
+          <ul class="mt-6 space-y-2 text-sm text-cream/70">
+            <li class="flex items-center gap-2"><span class="w-1 h-1 bg-gold"></span>90 m² · Private garden</li>
+            <li class="flex items-center gap-2"><span class="w-1 h-1 bg-gold"></span>Plunge pool &amp; outdoor shower</li>
+            <li class="flex items-center gap-2"><span class="w-1 h-1 bg-gold"></span>In-villa breakfast service</li>
+          </ul>
+          <a href="#contact" class="mt-8 inline-flex items-center gap-2 text-[12px] tracking-widest2 uppercase text-gold border-b border-gold/40 pb-1 w-fit hover:border-gold transition-colors">
+            View Details →
+          </a>
+        </div>
+      </article>
+
+      <!-- Room 3 -->
+      <article class="room-card group reveal bg-ink/40 border border-white/10 flex flex-col" style="transition-delay:.2s">
+        <div class="overflow-hidden h-72">
+          <img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?q=80&w=1974&auto=format&fit=crop"
+               alt="Presidential Penthouse living area" class="room-card-img w-full h-full object-cover">
+        </div>
+        <div class="room-card-details p-8 flex flex-col flex-1">
+          <div class="flex items-baseline justify-between gap-4">
+            <h3 class="font-display text-2xl">Presidential Penthouse</h3>
+            <p class="text-gold font-display text-xl whitespace-nowrap">€1,850<span class="text-cream/50 text-xs font-sans">/night</span></p>
+          </div>
+          <p class="text-cream/60 text-sm mt-3 leading-relaxed">
+            The top floor, entire — three terraces, a private chef's kitchen, and no neighbors.
+          </p>
+          <ul class="mt-6 space-y-2 text-sm text-cream/70">
+            <li class="flex items-center gap-2"><span class="w-1 h-1 bg-gold"></span>210 m² · Three terraces</li>
+            <li class="flex items-center gap-2"><span class="w-1 h-1 bg-gold"></span>Private chef on request</li>
+            <li class="flex items-center gap-2"><span class="w-1 h-1 bg-gold"></span>Dedicated butler service</li>
+          </ul>
+          <a href="#contact" class="mt-8 inline-flex items-center gap-2 text-[12px] tracking-widest2 uppercase text-gold border-b border-gold/40 pb-1 w-fit hover:border-gold transition-colors">
+            View Details →
+          </a>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ AMENITIES ============ -->
+<section id="amenities" class="bg-cream py-24 md:py-32 px-6 md:px-10">
+  <div class="max-w-7xl mx-auto">
+    <div class="reveal text-center max-w-2xl mx-auto mb-16">
+      <p class="eyebrow justify-center">Amenities</p>
+      <h2 class="font-display text-4xl md:text-5xl mt-6">Everything, arranged quietly</h2>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-ink/10">
+      <!-- Amenity -->
+      <div class="reveal bg-cream p-10 flex flex-col items-start gap-5 hover:bg-cream-warm transition-colors duration-300">
+        <svg class="w-8 h-8 text-gold-deep" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 15c1.5-2 3-2 4 0s2.5 2 4 0 3-2 4 0 3 2 4 0M4 19c1.5-2 3-2 4 0s2.5 2 4 0 3-2 4 0 3 2 4 0M12 3v8"/></svg>
+        <h3 class="font-display text-xl">Spa &amp; Wellness</h3>
+        <p class="text-ink/60 text-sm leading-relaxed">Cliffside treatment rooms, hammam, and a resident aromatherapist.</p>
+      </div>
+      <!-- Amenity -->
+      <div class="reveal bg-cream p-10 flex flex-col items-start gap-5 hover:bg-cream-warm transition-colors duration-300" style="transition-delay:.05s">
+        <svg class="w-8 h-8 text-gold-deep" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M5 21V10l7-6 7 6v11M9 21v-6h6v6"/></svg>
+        <h3 class="font-display text-xl">Infinity Pool</h3>
+        <p class="text-ink/60 text-sm leading-relaxed">Heated year-round, edge-set against the open sea.</p>
+      </div>
+      <!-- Amenity -->
+      <div class="reveal bg-cream p-10 flex flex-col items-start gap-5 hover:bg-cream-warm transition-colors duration-300" style="transition-delay:.1s">
+        <svg class="w-8 h-8 text-gold-deep" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 3c0 3-2 3-2 6a4 4 0 008 0c0-3-2-3-2-6M6 21h12M9 21v-3.5M15 21v-3.5"/></svg>
+        <h3 class="font-display text-xl">Fine Dining</h3>
+        <p class="text-ink/60 text-sm leading-relaxed">One seating nightly, a single tasting menu built around the day's catch.</p>
+      </div>
+      <!-- Amenity -->
+      <div class="reveal bg-cream p-10 flex flex-col items-start gap-5 hover:bg-cream-warm transition-colors duration-300" style="transition-delay:.15s">
+        <svg class="w-8 h-8 text-gold-deep" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21c-4.97-4.2-8-7.94-8-11.5A8 8 0 0112 2a8 8 0 018 7.5c0 3.56-3.03 7.3-8 11.5z"/><circle cx="12" cy="9.5" r="2.2"/></svg>
+        <h3 class="font-display text-xl">Private Beach</h3>
+        <p class="text-ink/60 text-sm leading-relaxed">A gated cove, cabanas, and a boat for those who'd rather not walk down.</p>
+      </div>
+      <!-- Amenity -->
+      <div class="reveal bg-cream p-10 flex flex-col items-start gap-5 hover:bg-cream-warm transition-colors duration-300" style="transition-delay:.2s">
+        <svg class="w-8 h-8 text-gold-deep" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="8" r="4"/><path stroke-linecap="round" d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>
+        <h3 class="font-display text-xl">Concierge</h3>
+        <p class="text-ink/60 text-sm leading-relaxed">Reservations, drivers, and small miracles, arranged before you ask.</p>
+      </div>
+      <!-- Amenity -->
+      <div class="reveal bg-cream p-10 flex flex-col items-start gap-5 hover:bg-cream-warm transition-colors duration-300" style="transition-delay:.25s">
+        <svg class="w-8 h-8 text-gold-deep" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9V6a3 3 0 016 0v3M4 9h10l1 11H3z"/><path stroke-linecap="round" d="M15 12h5l1 8h-6"/></svg>
+        <h3 class="font-display text-xl">Fitness Studio</h3>
+        <p class="text-ink/60 text-sm leading-relaxed">Open air, sea-facing, with a trainer on request for private sessions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GALLERY ============ -->
+<section id="gallery" class="bg-cream pb-24 md:pb-32 px-6 md:px-10">
+  <div class="max-w-7xl mx-auto">
+    <div class="reveal mb-12">
+      <p class="eyebrow">Gallery</p>
+      <h2 class="font-display text-4xl md:text-5xl mt-6">Moments at Aurelia Bay</h2>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <img class="reveal w-full h-64 md:h-80 object-cover md:col-span-2 md:row-span-2 md:h-full" src="https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?q=80&w=2069&auto=format&fit=crop" alt="Poolside view at golden hour">
+      <img class="reveal w-full h-40 md:h-56 object-cover" src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=1974&auto=format&fit=crop" alt="Suite interior detail" style="transition-delay:.05s">
+      <img class="reveal w-full h-40 md:h-56 object-cover" src="https://images.unsplash.com/photo-1445019980597-93fa8acb246c?q=80&w=1974&auto=format&fit=crop" alt="Table set for dinner on the terrace" style="transition-delay:.1s">
+      <img class="reveal w-full h-40 md:h-56 object-cover" src="https://images.unsplash.com/photo-1540541338287-41700207dee6?q=80&w=1974&auto=format&fit=crop" alt="Private plunge pool detail" style="transition-delay:.15s">
+      <img class="reveal w-full h-40 md:h-56 object-cover" src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1974&auto=format&fit=crop" alt="View of the coastline at dusk" style="transition-delay:.2s">
+    </div>
+  </div>
+</section>
+
+<!-- ============ TESTIMONIALS ============ -->
+<section class="bg-ink text-cream py-24 md:py-32 px-6 md:px-10">
+  <div class="max-w-3xl mx-auto text-center">
+    <p class="eyebrow on-dark justify-center reveal">Guest Stories</p>
+    <h2 class="font-display text-4xl md:text-5xl mt-6 reveal">Words from those who've stayed</h2>
+
+    <div class="relative mt-16 min-h-[220px]" id="slider">
+      <div class="testimonial-slide slide">
+        <svg class="w-8 h-8 text-gold mx-auto mb-6" fill="currentColor" viewBox="0 0 32 24"><path d="M0 24V13.5C0 6 5 0 13 0v6c-4 0-6.5 3-6.5 7.5H13V24H0zm18 0V13.5C18 6 23 0 31 0v6c-4 0-6.5 3-6.5 7.5H31V24H18z"/></svg>
+        <p class="font-display text-xl md:text-2xl italic leading-relaxed text-cream/90">
+          We arrived expecting a hotel and left feeling like we'd been guests in someone's home
+          — a very, very well-appointed one.
+        </p>
+        <p class="mt-8 text-sm tracking-widest2 uppercase text-gold">Marta &amp; Julien — Paris</p>
+      </div>
+
+      <div class="testimonial-slide slide hidden">
+        <svg class="w-8 h-8 text-gold mx-auto mb-6" fill="currentColor" viewBox="0 0 32 24"><path d="M0 24V13.5C0 6 5 0 13 0v6c-4 0-6.5 3-6.5 7.5H13V24H0zm18 0V13.5C18 6 23 0 31 0v6c-4 0-6.5 3-6.5 7.5H31V24H18z"/></svg>
+        <p class="font-display text-xl md:text-2xl italic leading-relaxed text-cream/90">
+          The Garden Villa's plunge pool at sunrise, alone, coffee in hand — that's the
+          memory I keep returning to.
+        </p>
+        <p class="mt-8 text-sm tracking-widest2 uppercase text-gold">Daniel R. — Zürich</p>
+      </div>
+
+      <div class="testimonial-slide slide hidden">
+        <svg class="w-8 h-8 text-gold mx-auto mb-6" fill="currentColor" viewBox="0 0 32 24"><path d="M0 24V13.5C0 6 5 0 13 0v6c-4 0-6.5 3-6.5 7.5H13V24H0zm18 0V13.5C18 6 23 0 31 0v6c-4 0-6.5 3-6.5 7.5H31V24H18z"/></svg>
+        <p class="font-display text-xl md:text-2xl italic leading-relaxed text-cream/90">
+          Every request was answered before we finished asking. It felt less like service
+          and more like being known.
+        </p>
+        <p class="mt-8 text-sm tracking-widest2 uppercase text-gold">Amara O. — Lagos</p>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-center gap-6 mt-10">
+      <button id="slide-prev" aria-label="Previous testimonial" class="w-10 h-10 border border-cream/20 hover:border-gold hover:text-gold flex items-center justify-center transition-colors">←</button>
+      <div id="slide-dots" class="flex items-center gap-2">
+        <button class="dot w-2 h-2 rounded-full bg-gold" data-i="0" aria-label="Testimonial 1"></button>
+        <button class="dot w-2 h-2 rounded-full bg-cream/30" data-i="1" aria-label="Testimonial 2"></button>
+        <button class="dot w-2 h-2 rounded-full bg-cream/30" data-i="2" aria-label="Testimonial 3"></button>
+      </div>
+      <button id="slide-next" aria-label="Next testimonial" class="w-10 h-10 border border-cream/20 hover:border-gold hover:text-gold flex items-center justify-center transition-colors">→</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT STRIP ============ -->
+<section id="contact" class="bg-slate text-cream py-20 px-6 md:px-10">
+  <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-10 text-center md:text-left">
+    <div class="reveal">
+      <p class="eyebrow on-dark justify-center md:justify-start">Reach Us</p>
+      <p class="mt-5 font-display text-2xl">+39 089 555 0142</p>
+    </div>
+    <div class="reveal" style="transition-delay:.1s">
+      <p class="eyebrow on-dark justify-center md:justify-start">Write</p>
+      <p class="mt-5 font-display text-2xl">stay@aureliabay.com</p>
+    </div>
+    <div class="reveal" style="transition-delay:.2s">
+      <p class="eyebrow on-dark justify-center md:justify-start">Find Us</p>
+      <p class="mt-5 font-display text-2xl">Via delle Sirene 14, Amalfi</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="bg-ink text-cream/70 pt-20 pb-8 px-6 md:px-10">
+  <div class="max-w-7xl mx-auto grid sm:grid-cols-2 md:grid-cols-4 gap-12 pb-16 border-b border-white/10">
+    <div>
+      <a href="#home" class="font-display text-2xl text-cream">Aurelia <span class="text-gold italic">Bay</span></a>
+      <p class="mt-5 text-sm leading-relaxed max-w-xs">
+        A family-run cliffside sanctuary on the Amalfi Coast, welcoming guests since 1962.
+      </p>
+    </div>
+    <div>
+      <p class="text-cream text-sm tracking-widest2 uppercase mb-5">Explore</p>
+      <ul class="space-y-3 text-sm">
+        <li><a href="#rooms" class="hover:text-gold transition-colors">Rooms &amp; Villas</a></li>
+        <li><a href="#amenities" class="hover:text-gold transition-colors">Amenities</a></li>
+        <li><a href="#gallery" class="hover:text-gold transition-colors">Gallery</a></li>
+        <li><a href="#booking" class="hover:text-gold transition-colors">Reservations</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="text-cream text-sm tracking-widest2 uppercase mb-5">Property</p>
+      <ul class="space-y-3 text-sm">
+        <li><a href="#" class="hover:text-gold transition-colors">Our Story</a></li>
+        <li><a href="#" class="hover:text-gold transition-colors">Dining</a></li>
+        <li><a href="#" class="hover:text-gold transition-colors">Weddings &amp; Events</a></li>
+        <li><a href="#contact" class="hover:text-gold transition-colors">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="text-cream text-sm tracking-widest2 uppercase mb-5">Follow</p>
+      <div class="flex gap-4">
+        <a href="#" aria-label="Instagram" class="w-9 h-9 border border-white/15 hover:border-gold hover:text-gold flex items-center justify-center transition-colors">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+        </a>
+        <a href="#" aria-label="Facebook" class="w-9 h-9 border border-white/15 hover:border-gold hover:text-gold flex items-center justify-center transition-colors">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4"><path stroke-linecap="round" stroke-linejoin="round" d="M14 9h3V6h-3c-2 0-3.5 1.5-3.5 3.5V12H8v3h2.5v6H14v-6h2.7l.5-3H14v-2c0-.6.4-1 1-1z"/></svg>
+        </a>
+        <a href="#" aria-label="Pinterest" class="w-9 h-9 border border-white/15 hover:border-gold hover:text-gold flex items-center justify-center transition-colors">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" d="M9.5 17c1-2 1.6-4 2.2-6.3.4-1.6 2.8-1.5 2.8.2 0 1-.8 3-1.8 3.6-1 .6-2 0-2-1.2 0-1.5 1.1-3.2 1.1-4.6 0-1.2-1.8-1.3-2.4.2-.4 1-.2 1.7 0 2.6-.6 2.5-1.4 5-1.6 6.2"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-cream/40">
+    <p>&copy; <span id="year"></span> Aurelia Bay. All rights reserved.</p>
+    <div class="flex gap-6">
+      <a href="#" class="hover:text-gold transition-colors">Privacy Policy</a>
+      <a href="#" class="hover:text-gold transition-colors">Terms</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ---- Sticky nav blur on scroll ----
+  const nav = document.getElementById('site-nav');
+  const onScroll = () => {
+    if (window.scrollY > 40) {
+      nav.classList.add('bg-ink/80', 'backdrop-blur-md', 'shadow-lg', 'shadow-ink/10', 'border-white/10');
+    } else {
+      nav.classList.remove('bg-ink/80', 'backdrop-blur-md', 'shadow-lg', 'shadow-ink/10', 'border-white/10');
+    }
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // ---- Mobile menu toggle ----
+  const menuBtn = document.getElementById('menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  menuBtn.addEventListener('click', () => {
+    const isOpen = !mobileMenu.classList.contains('hidden');
+    mobileMenu.classList.toggle('hidden');
+    menuBtn.setAttribute('aria-expanded', String(!isOpen));
+  });
+  document.querySelectorAll('.mobile-link').forEach(link => {
+    link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+  });
+
+  // ---- Reveal on scroll ----
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
+
+  // ---- Check availability (demo behaviour) ----
+  document.getElementById('check-availability').addEventListener('click', () => {
+    const ci = document.getElementById('checkin').value;
+    const co = document.getElementById('checkout').value;
+    const btn = document.getElementById('check-availability');
+    if (!ci || !co) {
+      btn.textContent = 'Select Both Dates';
+      setTimeout(() => btn.textContent = 'Check Availability', 1800);
+      return;
+    }
+    btn.textContent = 'Checking…';
+    setTimeout(() => {
+      btn.textContent = 'Rooms Available →';
+      setTimeout(() => btn.textContent = 'Check Availability', 2200);
+    }, 900);
+  });
+
+  // ---- Testimonial slider ----
+  const slides = document.querySelectorAll('.testimonial-slide');
+  const dots = document.querySelectorAll('.dot');
+  let current = 0;
+  let timer;
+
+  function showSlide(i) {
+    slides.forEach((s, idx) => s.classList.toggle('hidden', idx !== i));
+    dots.forEach((d, idx) => {
+      d.classList.toggle('bg-gold', idx === i);
+      d.classList.toggle('bg-cream/30', idx !== i);
+    });
+    current = i;
+  }
+
+  function nextSlide() { showSlide((current + 1) % slides.length); }
+  function prevSlide() { showSlide((current - 1 + slides.length) % slides.length); }
+
+  document.getElementById('slide-next').addEventListener('click', () => { nextSlide(); resetTimer(); });
+  document.getElementById('slide-prev').addEventListener('click', () => { prevSlide(); resetTimer(); });
+  dots.forEach(dot => dot.addEventListener('click', (e) => {
+    showSlide(Number(e.target.dataset.i));
+    resetTimer();
+  }));
+
+  function resetTimer() {
+    clearInterval(timer);
+    timer = setInterval(nextSlide, 6500);
+  }
+  resetTimer();
+
+  // ---- Footer year ----
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // ---- Set sensible default dates in the availability bar (UPDATED) ----
+  const ciInput = document.getElementById('checkin');
+  const coInput = document.getElementById('checkout');
+  const today = new Date();
+  const inWeek = new Date(today); inWeek.setDate(today.getDate() + 7);
+  const inTenDays = new Date(today); inTenDays.setDate(today.getDate() + 10);
+  const fmt = (d) => d.toISOString().split('T')[0];
+  
+  ciInput.min = fmt(today);
+  ciInput.value = fmt(inWeek);
+  coInput.min = fmt(inWeek);
+  coInput.value = fmt(inTenDays);
+</script>
+
+</body>
+</html>
